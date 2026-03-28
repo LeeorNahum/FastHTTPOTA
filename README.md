@@ -148,14 +148,21 @@ FastHTTPOTA.update(url, auth.c_str());
 
 ## ESP32 Partition Table
 
-Requires an OTA-capable partition table with two app slots (`ota_0`, `ota_1`) and an `otadata` partition. The default partition tables already include these.
+ESP32 OTA requires a partition table with two app slots (`ota_0`, `ota_1`) and an `otadata` partition. The default Arduino-ESP32 partition tables already include these, so no change is usually needed.
+
+| Board type | Common default partition | Approx app size |
+|------------|--------------------------|-----------------|
+| 8MB+ boards (most ESP32-S3) | `default_8MB.csv` | ~3.2MB |
+| 4MB boards | `default.csv` | ~1.25MB |
+
+If your firmware exceeds the default app slot size:
 
 ```ini
-; 4MB flash — larger apps:
+; 4MB flash, larger app slot:
 board_build.partitions = min_spiffs.csv
 
-; 8MB flash:
-board_build.partitions = default_8MB.csv
+; 16MB flash:
+board_build.partitions = default_16MB.csv
 ```
 
 ## How It Works
