@@ -10,7 +10,7 @@ Fast and simple HTTP Over-The-Air firmware updates for ESP32.
 - **Simple API**: Just call `update(url)` when you have a firmware URL
 - **Callback Interface**: React to OTA events (start, progress, complete, error, abort)
 - **HTTPS Support**: Secure firmware downloads via `WiFiClientSecure`
-- **Auth Header**: Optional Bearer token support for authenticated firmware servers
+- **Auth Argument**: Reserved for future lower-level authenticated OTA support
 - **Progress Notifications**: Real-time download progress with actual `Content-Length`
 - **Abort Support**: Cancel updates before the HTTP transfer begins
 - **Minimal Dependencies**: Uses ESP32's built-in `HTTPUpdate` library
@@ -58,8 +58,6 @@ void setup() {
 }
 
 void checkAndApplyUpdate(const char* firmwareUrl) {
-  // Optionally pass a Bearer token as the second argument:
-  //   FastHTTPOTA.update(firmwareUrl, "liq_yourapikey");
   bool ok = FastHTTPOTA.update(firmwareUrl);
 
   if (!ok) {
@@ -133,18 +131,13 @@ HTTPS downloads use `WiFiClientSecure` with `setInsecure()` (no certificate pinn
 
 ### Authorization
 
-Pass a Bearer token as the second argument to `update()`:
+The `auth` parameter is currently reserved for future use. ESP32's high-level
+`HTTPUpdate.update()` path does not expose arbitrary custom request headers, so
+authenticated firmware download URLs are not supported by this wrapper yet.
 
-```cpp
-FastHTTPOTA.update("https://api.example.com/firmware.bin", "mySecretToken");
-```
-
-The token is sent as `Authorization: mySecretToken`. Prefix `Bearer ` yourself if needed:
-
-```cpp
-String auth = "Bearer " + apiKey;
-FastHTTPOTA.update(url, auth.c_str());
-```
+For LaundryIQ's current OTA design this is fine because firmware binaries are
+served from public GitHub Releases URLs after the authenticated `/device/ota/check`
+API returns the download URL.
 
 ## ESP32 Partition Table
 

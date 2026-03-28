@@ -136,8 +136,9 @@ public:
    * and this function never actually returns to the caller.
    *
    * @param url  Full URL to firmware binary (http:// or https://)
-   * @param auth Optional Bearer token for Authorization header (e.g. "liq_abc123")
-   *             Pass nullptr to skip authorization header.
+   * @param auth Optional future-use auth string. Currently ignored because
+   *             ESP32's HTTPUpdate API does not support arbitrary custom
+   *             Authorization headers on the high-level update() path.
    */
   bool update(const char* url, const char* auth = nullptr);
 

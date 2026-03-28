@@ -145,9 +145,11 @@ bool FastHTTPOTAClass::update(const char* url, const char* auth) {
   // Register progress callback.
   httpUpdate.onProgress(httpUpdateProgress);
 
-  // Optional: set Authorization header.
-  // HTTPUpdate supports setAuthorization() only for basic auth.
-  // For Bearer tokens we use rebootOnUpdate to stay in control of the restart.
+  // NOTE:
+  // ESP32's HTTPUpdate class does not support arbitrary custom headers such as
+  // Authorization: Bearer ... on the high-level update() API. The auth
+  // argument is currently ignored and reserved for a future lower-level
+  // implementation if authenticated binary endpoints are ever needed.
   httpUpdate.rebootOnUpdate(false);
 
   bool isHttps = strncmp(url, "https://", 8) == 0;
@@ -159,18 +161,9 @@ bool FastHTTPOTAClass::update(const char* url, const char* auth) {
     // TODO: Replace with client.setCACert(rootCA) for production security.
     client.setInsecure();
 
-    if (auth) {
-      httpUpdate.setAuthorization(auth);
-    }
-
     result = httpUpdate.update(client, url);
   } else {
     WiFiClient client;
-
-    if (auth) {
-      httpUpdate.setAuthorization(auth);
-    }
-
     result = httpUpdate.update(client, url);
   }
 
